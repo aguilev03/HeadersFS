@@ -2,66 +2,48 @@
 
 #SingleInstance Force
 
-
-
 ; Declare GUI and variables
 
 stageList := ['First time Install',
+    'Reselect',
+    'Add on',
+    'Completion',
+    'Shortage',
+    'Inspection',
+    'Repair',
+    'Refurb',
+    'Demo',
+    'Reinstall',
+    'Prep',
+    'Additional Labor']
 
- 'Reselect',
-
- 'Add on',
-
- 'Completion',
-
- 'Shortage',
-
- 'Inspection',
-
- 'Repair',
-
- 'Refurb',
-
- 'Demo',
-
- 'Reinstall',
-
- 'Prep',
-
- 'Additional Labor']
-
-
-commodityList := ['(Vinyl)', 'Laminate', 'LVP Click', 'Roll Vinyl', 'Rubber', 'VP Glue', '(Wood)', 'Gluedown wood', 
- '(Carpet)', 'Carpet', 'Carpet Square', '(Misc)', 'House file', 'Slab', 'Multiple', '(Tile)', 'Multiple', 
- 'Tile Floor', 'Tile Wall', 'Tile Fireplace', 'Tile Backsplash', 'Tile Balcony', 'Tile Patio', 'Tile Pavers', 
- 'Grout', 'Caulking', '(Separated)', 'Waterproof', 'Tile Wall Master', 'Tile Wall Secondary', 
- 'Tile Wainscot', 'Tile Tub Area', 'Tile Mudpan', 'Tile Dog Wash']
+commodityList := ['(Vinyl)', 'Laminate', 'LVP Click', 'Roll Vinyl', 'Rubber', 'VP Glue', '(Wood)', 'Gluedown wood',
+    '(Carpet)', 'Carpet', 'Carpet Square', '(Misc)', 'House file', 'Slab', 'Multiple', '(Tile)', 'Multiple',
+    'Tile Floor', 'Tile Wall', 'Tile Fireplace', 'Tile Backsplash', 'Tile Balcony', 'Tile Patio', 'Tile Pavers',
+    'Grout', 'Caulking', '(Separated)', 'Waterproof', 'Tile Wall Master', 'Tile Wall Secondary',
+    'Tile Wainscot', 'Tile Tub Area', 'Tile Mudpan', 'Tile Dog Wash']
 
 prefixList := ["NONE", "REORDER", "MODEL", "OUT OF WARRANTY", "OCCUPIED", "CASH BEFORE DELIVERY"]
 
 selectedStage := "", selectedCommodity := ""
 
-
-
 ; Main GUI
 
 myGui := Gui()
 
-myGui.Add("Text",, "Stage:")
+myGui.Add("Text", , "Stage:")
 
 cbStage := myGui.Add("DropDownList", "w250 Choose1", stageList)
 
 cbStage.OnEvent("Change", (*) => UpdateResult())
 
-
-
-myGui.Add("Text",, "Commodity:")
+myGui.Add("Text", , "Commodity:")
 
 cbCommodity := myGui.Add("DropDownList", "w250 Choose1", commodityList)
 
 cbCommodity.OnEvent("Change", (*) => UpdateResult())
 
-myGui.Add("Text",, "Prefix:")
+myGui.Add("Text", , "Prefix:")
 
 cbPrefix := myGui.Add("DropDownList", "w250 Choose1", prefixList)
 
@@ -71,37 +53,36 @@ cbOverride := myGui.Add("Checkbox", "Checked0", "Override Mode")
 
 cbOverride.OnEvent("Click", (*) => UpdateResult())
 
+myGui.Add("Text", , "Category:")
 
-
-
-
-myGui.Add("Text",, "Category:")
-
-cbCategory := myGui.Add("DropDownList", "w250 Choose1", ["ACCLIMATION", "ACID WASH", "GROUT STAIN", "MATERIAL DELIVERY", "MATERIAL PICK UP", "MATERIAL NOT RETURNED", "DRAW ONLY", "TRIP CHARGE"])
+cbCategory := myGui.Add("DropDownList", "w250 Choose1", ["ACCLIMATION", "ACID WASH", "GROUT STAIN", "MATERIAL DELIVERY",
+    "MATERIAL PICK UP", "MATERIAL NOT RETURNED", "DRAW ONLY", "TRIP CHARGE"])
 
 cbCategory.OnEvent("Change", (*) => UpdateResult())
 
-
-
-myGui.Add("Text",, "Material:")
+myGui.Add("Text", , "Material:")
 
 cbMaterial := myGui.Add("DropDownList", "w250 Choose1", ["TILE", "VINYL", "WOOD", "CARPET"])
 
 cbMaterial.OnEvent("Change", (*) => UpdateResult())
 
-
-
 tbResult := myGui.Add("Edit", "w400 h60 ReadOnly")
 
-myGui.Add("Button",, "Copy to Clipboard").OnEvent("Click", (*) => A_Clipboard := tbResult.Value)
+myGui.Add("Button", , "Copy to Clipboard").OnEvent("Click", (*) => A_Clipboard := tbResult.Value)
 
+cbAlwaysOnTop := myGui.Add("Checkbox", , "Always on Top")
 
+cbAlwaysOnTop.OnEvent("Click", (*) => ToggleAlwaysOnTop())
 
 myGui.Title := "Stage + Commodity Lookup Tool"
 
 myGui.Show()
 
+ToggleAlwaysOnTop() {
 
+    myGui.Opt(cbAlwaysOnTop.Value ? "+AlwaysOnTop" : "-AlwaysOnTop")
+
+}
 
 ; --- Lookup Table (Auto-Generated from Excel) ---
 
@@ -113,7 +94,6 @@ prefixMap["MODEL"] := "MODEL"
 prefixMap["OUT OF WARRANTY"] := "OOW"
 prefixMap["OCCUPIED"] := "OCC"
 prefixMap["CASH BEFORE DELIVERY"] := "CBD"
-
 
 lookup := Map()
 
@@ -140,7 +120,7 @@ lookup["Refurb|Laminate"] := "LAMINATE REFURB"
 lookup["Demo|Laminate"] := "LAMINATE DEMO"
 lookup["Reinstall|Laminate"] := "LAMINATE REINSTALL"
 lookup["Prep|Laminate"] := "LAMINATE PREP"
-lookup["Additional Labor|Laminate"] := "LAMINATE  ADD LABOR"
+lookup["Additional Labor|Laminate"] := "LAMINATE ADD LABOR"
 lookup["First time Install|LVP Click"] := "LVP CLICK"
 lookup["Reselect|LVP Click"] := "LVP CLICK RESELECT"
 lookup["Add on|LVP Click"] := "LVP CLICK ADD ON"
@@ -152,7 +132,7 @@ lookup["Refurb|LVP Click"] := "LVP CLICK REFURB"
 lookup["Demo|LVP Click"] := "LVP CLICK DEMO"
 lookup["Reinstall|LVP Click"] := "LVP CLICK REINSTALL"
 lookup["Prep|LVP Click"] := "LVP CLICK PREP"
-lookup["Additional Labor|LVP Click"] := "LVP CLICK  ADD LABOR"
+lookup["Additional Labor|LVP Click"] := "LVP CLICK ADD LABOR"
 lookup["First time Install|Roll Vinyl"] := "ROLL VINYL"
 lookup["Reselect|Roll Vinyl"] := "ROLL VINYL RESELECT"
 lookup["Add on|Roll Vinyl"] := "ROLL VINYL ADD ON"
@@ -164,7 +144,7 @@ lookup["Refurb|Roll Vinyl"] := "ROLL VINYL REFURB"
 lookup["Demo|Roll Vinyl"] := "ROLL VINYL DEMO"
 lookup["Reinstall|Roll Vinyl"] := "ROLL VINYL REINSTALL"
 lookup["Prep|Roll Vinyl"] := "ROLL VINYL PREP"
-lookup["Additional Labor|Roll Vinyl"] := "ROLL VINYL  ADD LABOR"
+lookup["Additional Labor|Roll Vinyl"] := "ROLL VINYL ADD LABOR"
 lookup["First time Install|Rubber"] := "RUBBER"
 lookup["Reselect|Rubber"] := "RUBBER RESELECT"
 lookup["Add on|Rubber"] := "RUBBER ADD ON"
@@ -176,7 +156,7 @@ lookup["Refurb|Rubber"] := "RUBBER REFURB"
 lookup["Demo|Rubber"] := "RUBBER DEMO"
 lookup["Reinstall|Rubber"] := "RUBBER REINSTALL"
 lookup["Prep|Rubber"] := "RUBBER PREP"
-lookup["Additional Labor|Rubber"] := "RUBBER  ADD LABOR"
+lookup["Additional Labor|Rubber"] := "RUBBER ADD LABOR"
 lookup["First time Install|VP Glue"] := "VP GLUE"
 lookup["Reselect|VP Glue"] := "VP GLUE RESELECT"
 lookup["Add on|VP Glue"] := "VP GLUE ADD ON"
@@ -188,7 +168,7 @@ lookup["Refurb|VP Glue"] := "VP GLUE REFURB"
 lookup["Demo|VP Glue"] := "VP GLUE DEMO"
 lookup["Reinstall|VP Glue"] := "VP GLUE REINSTALL"
 lookup["Prep|VP Glue"] := "VP GLUE PREP"
-lookup["Additional Labor|VP Glue"] := "VP GLUE  ADD LABOR"
+lookup["Additional Labor|VP Glue"] := "VP GLUE ADD LABOR"
 lookup["First time Install|(Wood)"] := ""
 lookup["Reselect|(Wood)"] := ""
 lookup["Add on|(Wood)"] := ""
@@ -212,7 +192,7 @@ lookup["Refurb|Gluedown wood"] := "GLUE WOOD REFURB"
 lookup["Demo|Gluedown wood"] := "GLUE WOOD DEMO"
 lookup["Reinstall|Gluedown wood"] := "GLUE WOOD REINSTALL"
 lookup["Prep|Gluedown wood"] := "GLUE WOOD PREP"
-lookup["Additional Labor|Gluedown wood"] := "GLUE WOOD  ADD LABOR"
+lookup["Additional Labor|Gluedown wood"] := "GLUE WOOD ADD LABOR"
 lookup["First time Install|(Carpet)"] := ""
 lookup["Reselect|(Carpet)"] := ""
 lookup["Add on|(Carpet)"] := ""
@@ -236,7 +216,7 @@ lookup["Refurb|Carpet"] := "CARPET REFURB"
 lookup["Demo|Carpet"] := "CARPET DEMO"
 lookup["Reinstall|Carpet"] := "CARPET REINSTALL"
 lookup["Prep|Carpet"] := "CARPET PREP"
-lookup["Additional Labor|Carpet"] := "CARPET  ADD LABOR"
+lookup["Additional Labor|Carpet"] := "CARPET ADD LABOR"
 lookup["First time Install|Carpet Square"] := "CARPET SQUARE"
 lookup["Reselect|Carpet Square"] := "CARPET SQUARE RESELECT"
 lookup["Add on|Carpet Square"] := "CARPET SQUARE ADD ON"
@@ -248,7 +228,7 @@ lookup["Refurb|Carpet Square"] := "CARPET SQUARE REFURB"
 lookup["Demo|Carpet Square"] := "CARPET SQUARE DEMO"
 lookup["Reinstall|Carpet Square"] := "CARPET SQUARE REINSTALL"
 lookup["Prep|Carpet Square"] := "CARPET SQUARE PREP"
-lookup["Additional Labor|Carpet Square"] := "CARPET SQUARE  ADD LABOR"
+lookup["Additional Labor|Carpet Square"] := "CARPET SQUARE ADD LABOR"
 lookup["First time Install|(Misc)"] := ""
 lookup["Reselect|(Misc)"] := ""
 lookup["Add on|(Misc)"] := ""
@@ -332,7 +312,7 @@ lookup["Refurb|Tile Floor"] := "TILE FLOOR REFURB"
 lookup["Demo|Tile Floor"] := "TILE FLOOR DEMO"
 lookup["Reinstall|Tile Floor"] := "TILE FLOOR REINSTALL"
 lookup["Prep|Tile Floor"] := "TILE FLOOR PREP"
-lookup["Additional Labor|Tile Floor"] := "TILE FLOOR  ADD LABOR"
+lookup["Additional Labor|Tile Floor"] := "TILE FLOOR ADD LABOR"
 lookup["First time Install|Tile Wall"] := "TILE WALL"
 lookup["Reselect|Tile Wall"] := "TILE WALL RESELECT"
 lookup["Add on|Tile Wall"] := "TILE WALL ADD ON"
@@ -344,7 +324,7 @@ lookup["Refurb|Tile Wall"] := "TILE WALL REFURB"
 lookup["Demo|Tile Wall"] := "TILE WALL DEMO"
 lookup["Reinstall|Tile Wall"] := "TILE WALL REINSTALL"
 lookup["Prep|Tile Wall"] := "TILE WALL PREP"
-lookup["Additional Labor|Tile Wall"] := "TILE WALL  ADD LABOR"
+lookup["Additional Labor|Tile Wall"] := "TILE WALL ADD LABOR"
 lookup["First time Install|Tile Fireplace"] := "TILE FIREPLACE"
 lookup["Reselect|Tile Fireplace"] := "TILE FIREPLACE RESELECT"
 lookup["Add on|Tile Fireplace"] := "TILE FIREPLACE ADD ON"
@@ -356,7 +336,7 @@ lookup["Refurb|Tile Fireplace"] := "TILE FIREPLACE REFURB"
 lookup["Demo|Tile Fireplace"] := "TILE FIREPLACE DEMO"
 lookup["Reinstall|Tile Fireplace"] := "TILE FIREPLACE REINSTALL"
 lookup["Prep|Tile Fireplace"] := "TILE FIREPLACE PREP"
-lookup["Additional Labor|Tile Fireplace"] := "TILE FIREPLACE  ADD LABOR"
+lookup["Additional Labor|Tile Fireplace"] := "TILE FIREPLACE ADD LABOR"
 lookup["First time Install|Tile Backsplash"] := "TILE BACKSPLASH"
 lookup["Reselect|Tile Backsplash"] := "TILE BACKSPLASH RESELECT"
 lookup["Add on|Tile Backsplash"] := "TILE BACKSPLASH ADD ON"
@@ -368,7 +348,7 @@ lookup["Refurb|Tile Backsplash"] := "TILE BACKSPLASH REFURB"
 lookup["Demo|Tile Backsplash"] := "TILE BACKSPLASH DEMO"
 lookup["Reinstall|Tile Backsplash"] := "TILE BACKSPLASH REINSTALL"
 lookup["Prep|Tile Backsplash"] := "TILE BACKSPLASH PREP"
-lookup["Additional Labor|Tile Backsplash"] := "TILE BACKSPLASH  ADD LABOR"
+lookup["Additional Labor|Tile Backsplash"] := "TILE BACKSPLASH ADD LABOR"
 lookup["First time Install|Tile Balcony"] := "TILE BALCONY"
 lookup["Reselect|Tile Balcony"] := "TILE BALCONY RESELECT"
 lookup["Add on|Tile Balcony"] := "TILE BALCONY ADD ON"
@@ -380,7 +360,7 @@ lookup["Refurb|Tile Balcony"] := "TILE BALCONY REFURB"
 lookup["Demo|Tile Balcony"] := "TILE BALCONY DEMO"
 lookup["Reinstall|Tile Balcony"] := "TILE BALCONY REINSTALL"
 lookup["Prep|Tile Balcony"] := "TILE BALCONY PREP"
-lookup["Additional Labor|Tile Balcony"] := "TILE BALCONY  ADD LABOR"
+lookup["Additional Labor|Tile Balcony"] := "TILE BALCONY ADD LABOR"
 lookup["First time Install|Tile Patio"] := "TILE PATIO"
 lookup["Reselect|Tile Patio"] := "TILE PATIO RESELECT"
 lookup["Add on|Tile Patio"] := "TILE PATIO ADD ON"
@@ -392,7 +372,7 @@ lookup["Refurb|Tile Patio"] := "TILE PATIO REFURB"
 lookup["Demo|Tile Patio"] := "TILE PATIO DEMO"
 lookup["Reinstall|Tile Patio"] := "TILE PATIO REINSTALL"
 lookup["Prep|Tile Patio"] := "TILE PATIO PREP"
-lookup["Additional Labor|Tile Patio"] := "TILE PATIO  ADD LABOR"
+lookup["Additional Labor|Tile Patio"] := "TILE PATIO ADD LABOR"
 lookup["First time Install|Tile Pavers"] := "TILE PAVERS"
 lookup["Reselect|Tile Pavers"] := "TILE PAVERS RESELECT"
 lookup["Add on|Tile Pavers"] := "TILE PAVERS ADD ON"
@@ -404,7 +384,7 @@ lookup["Refurb|Tile Pavers"] := "TILE PAVERS REFURB"
 lookup["Demo|Tile Pavers"] := "TILE PAVERS DEMO"
 lookup["Reinstall|Tile Pavers"] := "TILE PAVERS REINSTALL"
 lookup["Prep|Tile Pavers"] := "TILE PAVERS PREP"
-lookup["Additional Labor|Tile Pavers"] := "TILE PAVERS  ADD LABOR"
+lookup["Additional Labor|Tile Pavers"] := "TILE PAVERS ADD LABOR"
 lookup["First time Install|Grout"] := ""
 lookup["Reselect|Grout"] := "GROUT RESELECT"
 lookup["Add on|Grout"] := ""
@@ -464,7 +444,7 @@ lookup["Refurb|Tile Wall Master"] := "TILE WALL REFURB"
 lookup["Demo|Tile Wall Master"] := "TILE WALL DEMO"
 lookup["Reinstall|Tile Wall Master"] := "TILE WALL REINSTALL"
 lookup["Prep|Tile Wall Master"] := "TILE WALL PREP"
-lookup["Additional Labor|Tile Wall Master"] := "TILE WALL  ADD LABOR"
+lookup["Additional Labor|Tile Wall Master"] := "TILE WALL ADD LABOR"
 lookup["First time Install|Tile Wall Secondary"] := "TILE WALL SEC"
 lookup["Reselect|Tile Wall Secondary"] := "TILE WALL SEC RESELECT"
 lookup["Add on|Tile Wall Secondary"] := "TILE WALL SEC ADD ON"
@@ -476,7 +456,7 @@ lookup["Refurb|Tile Wall Secondary"] := "TILE WALL REFURB"
 lookup["Demo|Tile Wall Secondary"] := "TILE WALL DEMO"
 lookup["Reinstall|Tile Wall Secondary"] := "TILE WALL REINSTALL"
 lookup["Prep|Tile Wall Secondary"] := "TILE WALL PREP"
-lookup["Additional Labor|Tile Wall Secondary"] := "TILE WALL  ADD LABOR"
+lookup["Additional Labor|Tile Wall Secondary"] := "TILE WALL ADD LABOR"
 lookup["First time Install|Tile Wainscot"] := "TILE WAINSCOT"
 lookup["Reselect|Tile Wainscot"] := "TILE WAINSCOT RESELECT"
 lookup["Add on|Tile Wainscot"] := "TILE WAINSCOT ADD ON"
@@ -488,7 +468,7 @@ lookup["Refurb|Tile Wainscot"] := "TILE WALL REFURB"
 lookup["Demo|Tile Wainscot"] := "TILE WALL DEMO"
 lookup["Reinstall|Tile Wainscot"] := "TILE WALL REINSTALL"
 lookup["Prep|Tile Wainscot"] := "TILE WALL PREP"
-lookup["Additional Labor|Tile Wainscot"] := "TILE WALL  ADD LABOR"
+lookup["Additional Labor|Tile Wainscot"] := "TILE WALL ADD LABOR"
 lookup["First time Install|Tile Tub Area"] := "TILE TUB AREA"
 lookup["Reselect|Tile Tub Area"] := "TILE TUB AREA RESELECT"
 lookup["Add on|Tile Tub Area"] := "TILE TUB AREA ADD ON"
@@ -500,7 +480,7 @@ lookup["Refurb|Tile Tub Area"] := "TILE TUB AREA REFURB"
 lookup["Demo|Tile Tub Area"] := "TILE TUB AREA DEMO"
 lookup["Reinstall|Tile Tub Area"] := "TILE TUB AREA REINSTALL"
 lookup["Prep|Tile Tub Area"] := "TILE WALL PREP"
-lookup["Additional Labor|Tile Tub Area"] := "TILE WALL  ADD LABOR"
+lookup["Additional Labor|Tile Tub Area"] := "TILE WALL ADD LABOR"
 lookup["First time Install|Tile Mudpan"] := "TILE MUDPAN"
 lookup["Reselect|Tile Mudpan"] := "TILE MUDPAN RESELECT"
 lookup["Add on|Tile Mudpan"] := "TILE MUDPAN ADD ON"
@@ -512,7 +492,7 @@ lookup["Refurb|Tile Mudpan"] := "TILE MUDPAN REFURB"
 lookup["Demo|Tile Mudpan"] := "TILE MUDPAN DEMO"
 lookup["Reinstall|Tile Mudpan"] := "TILE MUDPAN REINSTALL"
 lookup["Prep|Tile Mudpan"] := "TILE WALL PREP"
-lookup["Additional Labor|Tile Mudpan"] := "TILE WALL  ADD LABOR"
+lookup["Additional Labor|Tile Mudpan"] := "TILE WALL ADD LABOR"
 lookup["First time Install|Tile Dog Wash"] := "TILE DOG WASH"
 lookup["Reselect|Tile Dog Wash"] := "TILE DOG WASH RESELECT"
 lookup["Add on|Tile Dog Wash"] := "TILE DOG WASH ADD ON"
@@ -524,7 +504,7 @@ lookup["Refurb|Tile Dog Wash"] := "TILE DOG WASH REFURB"
 lookup["Demo|Tile Dog Wash"] := "TILE DOG WASH DEMO"
 lookup["Reinstall|Tile Dog Wash"] := "TILE DOG WASH REINSTALL"
 lookup["Prep|Tile Dog Wash"] := "TILE WALL PREP"
-lookup["Additional Labor|Tile Dog Wash"] := "TILE WALL  ADD LABOR"
+lookup["Additional Labor|Tile Dog Wash"] := "TILE WALL ADD LABOR"
 
 overrideMap := Map()
 overrideMap["ACCLIMATION|TILE"] := ""
@@ -568,8 +548,6 @@ UpdateResult() {
 
     override := cbOverride.Value
 
-
-
     if override {
 
         category := cbCategory.Text
@@ -588,8 +566,6 @@ UpdateResult() {
         result := lookup.Has(key) ? lookup[key] : ""
 
     }
-
-
 
     tbResult.Value := Trim(StrUpper(prefix " " result))
 
